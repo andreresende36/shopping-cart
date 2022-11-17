@@ -1,5 +1,6 @@
 import { fetchProduct, fetchProductsList } from './helpers/fetchFunctions';
-import { createProductElement, createCartProductElement } from './helpers/shopFunctions';
+import { createProductElement, createCartProductElement,
+  totalCalculator } from './helpers/shopFunctions';
 import { saveCartID, getSavedCartIDs } from './helpers/cartFunctions';
 import { searchCep } from './helpers/cepFunctions';
 import './style.css';
@@ -7,8 +8,9 @@ import './style.css';
 document.querySelector('.cep-button').addEventListener('click', searchCep);
 
 const productsSection = document.getElementsByClassName('products');
-const cartProducts = document.querySelector('.cart__products');
+
 const savedCartIDs = getSavedCartIDs();
+const cartProducts = document.querySelector('.cart__products');
 
 const loading = (bool) => {
   if (bool === true) {
@@ -34,6 +36,7 @@ const cartButtonFn = async (event) => {
   saveCartID(id);
   const product = await fetchProduct(id);
   cartProducts.appendChild(createCartProductElement(product));
+  totalCalculator();
 };
 
 const fillProductsList = async (query) => {
@@ -53,9 +56,13 @@ const fillProductsList = async (query) => {
   }
 };
 
-fillProductsList('computador');
+const getLocalStorage = () => {
+  Promise.all(savedCartIDs.map((id) => fetchProduct(id)))
+    .then((data) => data.forEach((product) => {
+      cartProducts.appendChild(createCartProductElement(product));
+      totalCalculator();
+    }));
+};
 
-Promise.all(savedCartIDs.map((id) => fetchProduct(id)))
-  .then((data) => data.forEach((product) => {
-    cartProducts.appendChild(createCartProductElement(product));
-  }));
+fillProductsList('computador');
+getLocalStorage();

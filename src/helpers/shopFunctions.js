@@ -5,6 +5,18 @@ import { removeCartID } from './cartFunctions';
 
 // Fique a vontade para modificar o código já escrito e criar suas próprias funções!
 
+const totalPrice = document.querySelector('.total-price');
+const cartProducts = document.querySelector('.cart__products');
+const productsPrices = cartProducts.getElementsByClassName('product__price__value');
+
+export const totalCalculator = () => {
+  let sumTotalPrice = 0;
+  for (let i = 0; i < productsPrices.length; i += 1) {
+    sumTotalPrice += Number(productsPrices[i].innerText);
+  }
+  totalPrice.innerHTML = sumTotalPrice;
+};
+
 /**
  * Função responsável por criar e retornar o elemento de imagem do produto.
  * @param {string} imageSource - URL da imagem.
@@ -48,6 +60,7 @@ export const getIdFromProduct = (product) => (
 const removeCartProduct = (li, id) => {
   li.remove();
   removeCartID(id);
+  totalCalculator();
 };
 
 /**
