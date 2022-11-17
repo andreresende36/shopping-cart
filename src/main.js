@@ -1,6 +1,6 @@
 import { fetchProduct, fetchProductsList } from './helpers/fetchFunctions';
 import { createProductElement, createCartProductElement } from './helpers/shopFunctions';
-import { saveCartID } from './helpers/cartFunctions';
+import { saveCartID, getSavedCartIDs } from './helpers/cartFunctions';
 import { searchCep } from './helpers/cepFunctions';
 import './style.css';
 
@@ -8,6 +8,7 @@ document.querySelector('.cep-button').addEventListener('click', searchCep);
 
 const productsSection = document.getElementsByClassName('products');
 const cartProducts = document.querySelector('.cart__products');
+const savedCartIDs = getSavedCartIDs();
 
 const loading = (bool) => {
   if (bool === true) {
@@ -53,3 +54,8 @@ const fillProductsList = async (query) => {
 };
 
 fillProductsList('computador');
+
+Promise.all(savedCartIDs.map((id) => fetchProduct(id)))
+  .then((data) => data.forEach((product) => {
+    cartProducts.appendChild(createCartProductElement(product));
+  }));
